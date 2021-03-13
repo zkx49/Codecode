@@ -12,3 +12,18 @@
 //        代码逻辑在处理头结点和尾结点的时候，是否能正常工作？
 // 五、举例画图，辅助思考
 // 六、无捷径，多写多练
+type ListNode struct {
+	value interface{}
+	next  *ListNode
+}
+type LinkedList struct {
+	head   *ListNode
+	length uint
+}
+
+func NewListNode(v interface{]}) *ListNode {
+	return &ListNode{v,nil}
+}
+func NewLinkedList() *LinkedList {
+	return &LinkedList{NewLinkedList(0),0}
+}
