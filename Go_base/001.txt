@@ -1,0 +1,30 @@
+// The new built-in function allocates memory. The first argument is a type,
+// not a value, and the value returned is a pointer to a newly
+// allocated zero value of that type.
+ 
+func new(Type) *Type
+分配的是一个 零值填充 的类型为T的内存空间，并且返回其地址，即一个*T类型的值。
+返回的永远是类型的指针，指向分配类型的地址。
+
+func make(t Type, size ...IntegerType) Type
+内建函数 make 用来为 slice，map 或 chan 类型 分配内存和初始化 一个对象
+因为这三种类型就是引用类型，所以就没必要返回他们的指针了。
+// 总结
+new和make都在堆上分配内存，但是它们的行为不同，适用于不同的类型。
+
+new(T) 为每个新的类型T分配一片内存，初始化为 0 并且返回类型为*T的内存地址：
+这种方法 返回一个指向类型为 T，值为 0 的地址的指针，它适用于值类型如数组和结构体；它相当于 &T{}。
+
+make(T) 返回一个类型为 T 的初始值，是三个引用类型本身，它只适用于3种内建的引用类型：slice、map 和 channel。
+换言之，new 函数分配内存，make 函数初始化。
+
+nil是一种数据结构，代表的是空值。
+按照Go语言规范，任何类型在未初始化时都对应一个零值：
+布尔类型是false，整型是0，字符串是""，
+而指针，函数，interface，slice，channel和map的零值都是nil。
+
+defer 是后进先出。 panic 需要等defer 结束后才会向上传递。出现panic恐慌时候，会先按照defer的后入先出的顺序执行，最后才会执行panic。
+
+range每次都会把当前值赋值到循环变量上，而不是直接使用原变量，
+在例程中，我们保存了当前循环变量的地址，但是Go每次循环都会复用这一"循环变量", 
+所以每次保存的地址实际上指向同一变量，最后，内容都变成了最后一个元素的值。
