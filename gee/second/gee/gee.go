@@ -1,13 +1,12 @@
 package gee
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 )
 
 // 定义函数类型，将函数类型当成一种函数参数
-type HandlerFunc func(http.ResponseWriter, *http.Request)
+type HandlerFunc func(*Context)
 
 // Engine is the uni handler for all requests
 type Engine struct {
@@ -20,14 +19,13 @@ func New() *Engine {
 
 // 键值对保存路由，其他方法调用addRoute方法
 func (engine *Engine) addRoute(method string, pattern string, handler HandlerFunc) {
-	key := method + "-" + pattern
-	log.Printf("Route %4s -%s", method, pattern)
-	engine.router[key] = handler
+	log.Printf("Route %4s - %s",method,pattern)
+	engine.router.addRoute(method,pattern,handler)
 }
-func (engine *Engine) GET(method string, pattern string, handler HandlerFunc) {
+func (engine *Engine) GET(pattern string, handler HandlerFunc) {
 	engine.addRoute("GET", pattern, handler)
 }
-func (engine *Engine) POST(method string, pattern string, handler HandlerFunc) {
+func (engine *Engine) POST( pattern string, handler HandlerFunc) {
 	engine.addRoute("POST", pattern, handler)
 }
 
@@ -41,11 +39,7 @@ func (engine *Engine) Run(addr string) (err error) {
 // 第二个参数是 Request ，该对象包含了该HTTP请求的所有的信息，比如请求地址、Header和Body等信息；
 // 第一个参数是 ResponseWriter ，利用 ResponseWriter 可以构造针对该请求的响应。
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	key := req.Method + "-" + req.URL.Path
-	if handler, ok := engine.router[key]; ok {
-		handler(w, req)
-	} else {
-		fmt.Fprintf(w, "404 no found:%s\n", req.URL)
-	}
+	c := newContext(w,req)
+	engine.router.handle(c)
 
 }

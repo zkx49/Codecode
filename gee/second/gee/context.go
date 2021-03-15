@@ -19,7 +19,7 @@ type Context struct {
 	StatusCode int
 }
 
-func newContext(w http.ResponeWriter, req *http.Request) *Context {
+func newContext(w http.ResponseWriter, req *http.Request) *Context {
 	return &Context{
 		Writer: w,
 		Req:    req,
